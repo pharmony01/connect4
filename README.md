@@ -80,3 +80,17 @@ There are several additional optional parameters that can be passed to connect4.
         $ python connect4.py --player1 ai1.py --player2 ai2.py --fast
 
     where `ai1.py` and `ai2.py` are placeholders for AI players of your choosing.
+
+## Creating Custom AI Players
+
+In order to create a custom AI player, simply make a new Python script containing the function `get_computer_move(board, which_player)` that returns a column index in which to drop a disc given the current state of the game (`board`) and which player you are competing as (`which_player`). Check out the sample players for general templates to use.
+
+# NOTES:
+
+1. A decent approach for creating/testing/debugging custom AI players is to put the player file in the players directory and then run games against other human or AI players.
+
+2. You may assume that you have access to `utils.py`, so make sure to `import utils` at the top of your player file if you want to leverage those helpful functions.
+
+3. Your choice of column should use 1-indexing, so the leftmost column is 1, not 0! If that is confusing or frustrating, simply add a "+1" to whatever 0-indexing approach you were planning to use.
+
+4. If any player (human or AI) makes an invalid choice (e.g. a column number that does not exist or a column that is full), they forfeit the game, so be careful in your computations!
