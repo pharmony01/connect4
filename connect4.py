@@ -18,7 +18,7 @@ import utils
 DELAY = 0.1  # default time to wait between things, in seconds
 TIMEOUT = 5  # maximum time per move, in seconds
 
-parser = argparse.ArgumentParser(description="Play Gorgons in Python!")
+parser = argparse.ArgumentParser(description="Play Connect Four in Python!")
 parser.add_argument('--player1', metavar='p1', type=str, help="either 'human' (default) or the name of an AI file", default='human')
 parser.add_argument('--player2', metavar='p2', type=str, help="either 'human' (default) or the name of an AI file", default='human')
 parser.add_argument('-r', '--rows', type=int, help="number of rows on the board (default=6)", default=6)
