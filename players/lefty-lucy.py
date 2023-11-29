@@ -16,7 +16,7 @@ def get_computer_move(board, which_player):
 
     Returns
     -------
-    col : int
+    choice : int
         The column (using 1-indexing!) that the player wants to drop a disc into.
     """
     valid_moves = utils.get_valid_moves(board)
