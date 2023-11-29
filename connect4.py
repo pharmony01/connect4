@@ -9,6 +9,7 @@
 # Author: Matthew Eicholtz
 
 import argparse
+from copy import deepcopy
 import numpy as np
 import pdb
 import time
@@ -107,7 +108,7 @@ def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
         else: # AI player
             utils.status(gui, f"{player_id} is thinking...")
             if not fast: time.sleep(DELAY)
-            col = players['ai'][current_player].get_computer_move(board, current_player)
+            col = players['ai'][current_player].get_computer_move(deepcopy(board), current_player)
             if verbose: print(f'\t{player_id} selects column {col}')
             
             # Validate the move
