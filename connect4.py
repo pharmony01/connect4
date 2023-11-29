@@ -32,22 +32,20 @@ def main(args):
         print("=" * 50)
 
     # Load AI player(s) if necessary
-    players, ai = utils.load_players(args.player1, args.player2, verbose=args.verbose)
+    players = utils.load_players(args.player1, args.player2, verbose=args.verbose)
     
     # Play the game
-    play(players, ai, **vars(args))
+    play(players, **vars(args))
 
 
-def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
+def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
     """Play a game of Connect Four.
 
     Parameters
     ----------
-    players : list of str
-        Names of both players
-    ai : list of imported modules
-        Modules for any AI players (i.e. any player not named "human"). Modules must contain
-        a get_computer_move function.
+    players : dict of lists
+        Dictionary of information for each player. Keys include 'name', 'id', and 'ai'.
+        For AI players, the 'ai' module must contain a get_computer_move function.
     rows : int
         Number of rows on the board (default=6).
     cols : int
@@ -66,7 +64,7 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
     if verbose: print("Starting the game..")
 
     # Non-graphics play only valid when no humans are playing
-    if 'human' in players:
+    if 'human' in players['name']:
         fast = False
 
     # Initialize the graphical user interface and board
@@ -78,9 +76,12 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
     current_player = 0  # whose turn is it? toggle between 0 and 1
     gameover = False
     while not gameover:
+        # Store player ID for easier verbose mode
+        player_id = players['id'][current_player]
+
         # Ask current player to make a move
-        if players[current_player] == 'human':
-            utils.status(gui, f"Player {current_player + 1}, pick a column (1-{args.cols})...")
+        if players['name'][current_player] == 'human':
+            utils.status(gui, f"{player_id}, pick a column (1-{args.cols})...")
 
             key = gui.checkKey()
             if key == "Escape" or key == "Ctrl+e": # exit game
@@ -93,7 +94,7 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
                 current_player = 0
             elif key in [str(i + 1) for i in range(args.cols)]:
                 col = int(key) # index of desired column
-                if verbose: print(f'\tPlayer {current_player + 1} selects column {col}')
+                if verbose: print(f'\t{player_id} selects column {col}')
                 
                 # Validate the move
                 col = col - 1 # convert to 0-indexing
@@ -101,13 +102,13 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
                     utils.drop(gui, board, current_player, col)
                     current_player = 1 - current_player # switch turns
                 else: # the player must forfeit for illegal moves
-                    utils.status(gui, f"Player {current_player + 1} ({players[current_player]}) made an illegal move. Player {abs(current_player - 2)} wins!")
+                    utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
                     break
         else: # AI player
-            utils.status(gui, f"Player {current_player + 1} ({players[current_player]}) is thinking...")
+            utils.status(gui, f"{player_id} is thinking...")
             if not fast: time.sleep(DELAY)
-            col = ai[current_player].get_computer_move(board, current_player)
-            if verbose: print(f'\tPlayer {current_player + 1} selects column {col}')
+            col = players['ai'][current_player].get_computer_move(board, current_player)
+            if verbose: print(f'\t{player_id} selects column {col}')
             
             # Validate the move
             col = col - 1 # convert to 0-indexing
@@ -115,7 +116,7 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
                 utils.drop(gui, board, current_player, col)
                 current_player = 1 - current_player # switch turns
             else: # the player must forfeit for illegal moves
-                utils.status(gui, f"Player {current_player + 1} ({players[current_player]}) made an illegal move. Player {abs(current_player - 2)} wins!")
+                utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
                 break
 
         # Check if game is over yet
@@ -127,7 +128,7 @@ def play(players, ai, rows=6, cols=7, fast=False, verbose=False, **kwargs):
         utils.status(gui, msg)
         if verbose: print(msg)
     elif winner in [1, 2]:
-        msg = f"PLAYER {winner} WINS!"
+        msg = f"{players['id'][winner - 1].upper()} WINS!"
         utils.status(gui, msg)
         if verbose: print(msg)
 

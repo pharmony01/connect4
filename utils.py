@@ -220,39 +220,42 @@ def load_players(player1, player2, verbose=False):
 
     Returns
     -------
-    players : list of str
-    	List containing the player names.
-    ai : list of imported modules
-    	List of imported AI player functions (None if human).
+    players : dict of lists
+        Dictionary of information for each player. Keys include 'name', 'id', and 'ai'.
+        For AI players, the 'ai' module must contain a get_computer_move function.
     """
     if verbose: print(f"Loading players...")
 
-    # Initialize outputs
-    players = [player1, player2]
-    ai = [None, None]
+    # Initialize output
+    players = {
+        'name': [player1, player2],
+        'id': [None, None],
+        'ai': [None, None]}
 
     # Try loading each player
-    for i in range(len(players)):
-        if players[i] == "human":
+    for i in range(2):
+        if players['name'][i] == "human":
             if verbose: print(f"\tPlayer {i + 1} is a human.")
+            players['id'][i] = f"Player {i + 1} ({'yellow' if i == 0 else 'red'})"
         else: # AI player
-            if verbose: print(f"\tPlayer {i + 1} AI ({players[i]})...", end="")
+            if verbose: print(f"\tPlayer {i + 1} ({players['name'][i]})...", end="")
             try:
-                pathname, filename = os.path.split(os.path.abspath(players[i]))
+                pathname, filename = os.path.split(os.path.abspath(players['name'][i]))
                 filename = ''.join(filename.split('.')[:-1])  # remove filename extension
-                players[i] = filename  # simplify the player name for display
+                players['name'][i] = filename  # simplify the player name for display
                 sys.path.append(pathname)  # add directory containing AI player to system path
-                ai[i] = importlib.import_module(filename)
+                players['ai'][i] = importlib.import_module(filename)
             except ImportError:
-                print(f"\n\tERROR: Cannot import AI player from file ({players[i]})")
+                print(f"\n\tERROR: Cannot import AI player from file ({players['name'][i]})")
                 return 0
 
-            if not hasattr(ai[i], 'get_computer_move'):
-                print(f"\n\tERROR: This AI player ({players[i]}) does not have a 'get_computer_move' function")
+            if not hasattr(players['ai'][i], 'get_computer_move'):
+                print(f"\n\tERROR: This AI player ({players['name'][i]}) does not have a 'get_computer_move' function")
                 return 0
             if verbose: print("complete")
+            players['id'][i] = f"{players['name'][i].title()} ({'yellow' if i == 0 else 'red'})"
 
-    return players, ai
+    return players
 
 def reset(gui, delay=1.0):
     """Reset the user interface elements in order to start a new game.
