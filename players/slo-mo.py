@@ -8,7 +8,7 @@ import time
 import utils
 
 def get_computer_move(board, which_player):
-    '''*Slowly* select a random move from the set of valid moves.
+    """*Slowly* select a random move from the set of valid moves.
 
     Parameters
     ----------
@@ -20,8 +20,8 @@ def get_computer_move(board, which_player):
     Returns
     -------
     col : int
-        The column index (using 1-indexing!) that the player wants to drop a disc into.
-    '''
+        The column (using 1-indexing!) that the player wants to drop a disc into.
+    """
     time.sleep(3)
     valid_moves = utils.get_valid_moves(board)
     return random.choice(valid_moves) + 1

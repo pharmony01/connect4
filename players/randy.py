@@ -6,7 +6,7 @@ import random
 import utils
 
 def get_computer_move(board, which_player):
-    '''Randomly select a move from the set of valid moves.
+    """Randomly select a move from the set of valid moves.
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ def get_computer_move(board, which_player):
     Returns
     -------
     col : int
-        The column index (using 1-indexing!) that the player wants to drop a disc into.
-    '''
+        The column (using 1-indexing!) that the player wants to drop a disc into.
+    """
     valid_moves = utils.get_valid_moves(board)
     return random.choice(valid_moves) + 1

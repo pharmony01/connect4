@@ -7,7 +7,7 @@ import random
 import utils
 
 def get_computer_move(board, which_player):
-    '''Pick the middlemost available move.
+    """Pick the middlemost available move.
 
     Parameters
     ----------
@@ -19,8 +19,8 @@ def get_computer_move(board, which_player):
     Returns
     -------
     col : int
-        The column index (using 1-indexing!) that the player wants to drop a disc into.
-    '''
+        The column (using 1-indexing!) that the player wants to drop a disc into.
+    """
 
     # Get all valid moves
     valid_moves = utils.get_valid_moves(board)
