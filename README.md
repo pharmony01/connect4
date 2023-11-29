@@ -85,7 +85,7 @@ There are several additional optional parameters that can be passed to connect4.
 
 In order to create a custom AI player, simply make a new Python script containing the function `get_computer_move(board, which_player)` that returns a column index in which to drop a disc given the current state of the game (`board`) and which player you are competing as (`which_player`). Check out the sample players for general templates to use.
 
-# NOTES:
+### NOTES:
 
 1. A decent approach for creating/testing/debugging custom AI players is to put the player file in the players directory and then run games against other human or AI players.
 
