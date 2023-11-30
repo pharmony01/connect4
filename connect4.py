@@ -73,7 +73,6 @@ def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
     board = np.zeros((args.rows, args.cols))
 
     # Play the game
-    input("Start the game? ")
     current_player = 0  # whose turn is it? toggle between 0 and 1
     gameover = False
     while not gameover:
@@ -121,6 +120,7 @@ def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
                     utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
                     break
             except:
+                pdb.set_trace()
                 current_player = 1 - current_player # you lost your turn!
 
         # Check if game is over yet
