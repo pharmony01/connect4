@@ -120,15 +120,15 @@ def is_gameover(board):
     winner : int
         Who won the game? (1=player1, 2=player2, 0=tie, -1=undetermined)
     """
-    if get_valid_moves(board).size == 0: # tie
-        gameover = True
-        winner = 0
-    elif is_winner(board, 1): # player 1 wins
+    if is_winner(board, 1): # player 1 wins
         gameover = True
         winner = 1
     elif is_winner(board, 2): # player 2 wins
         gameover = True
         winner = 2
+    elif get_valid_moves(board).size == 0: # tie
+        gameover = True
+        winner = 0
     else: # game is not over yet
         gameover = False
         winner = -1
