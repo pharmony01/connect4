@@ -154,7 +154,7 @@ def is_valid(board, col):
         false otherwise.
     """
     rows = get_next_available_rows(board)
-    return rows[col] >= 0
+    return rows[col] >= 0 and col >= 0
 
 def is_winner(board, player):
     """Check to see if a specific player has connected four discs.
