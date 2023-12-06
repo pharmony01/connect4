@@ -3,8 +3,10 @@ import pdb
 import utils
 import random
 
+STUPID_GLOBAL = -1
 
 def get_computer_move(board: np.ndarray, which_player: int):
+    global STUPID_GLOBAL
     """Search for the best move based on the current game state.
     Parameters
     ----------
@@ -18,8 +20,9 @@ def get_computer_move(board: np.ndarray, which_player: int):
     choice : int
     The column (using 1-indexing!) that the player wants to drop a disc into.
     """
+    STUPID_GLOBAL = which_player
     best_move, _ = minimax(
-        board, which_player + 1, depth=3, alpha=float("-inf"), beta=float("inf")
+        board, which_player + 1, depth=4, alpha=float("-inf"), beta=float("inf")
     )
     print(f"Chosen move: {_}")
     return best_move + 1
@@ -90,18 +93,24 @@ def cost(board, player):
 def evaluate_window(window, player):
     window = np.array(window)
     opponent = 3 - player
-    if np.count_nonzero(window == opponent) == 4:
-        return 1e10
-    if np.count_nonzero(window == opponent) == 3:
-        return 10
-    if np.count_nonzero(window == opponent) == 2:
-        return 5
-    if np.count_nonzero(window == player) == 4:
-        return -1e10
-    if np.count_nonzero(window == player) == 3:
-        return -15
+
+    if STUPID_GLOBAL == 0:
+        our_count = np.count_nonzero(window == player)
+        their_count = np.count_nonzero(window == opponent)
     else:
-        return 0
+        our_count = np.count_nonzero(window == opponent)
+        their_count = np.count_nonzero(window == player)
+    if our_count == 4:
+        return 1e10
+    if their_count == 4:
+        return -1e10
+    if our_count == 3:
+        return 10
+    if their_count == 3:
+        return -15
+    if our_count == 2:
+        return 5
+    return 0
 
 
 # Works as intended
