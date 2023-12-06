@@ -38,7 +38,6 @@ def main(args):
     # Play the game
     play(players, **vars(args))
 
-
 def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
     """Play a game of Connect Four.
 
@@ -108,17 +107,21 @@ def play(players, rows=6, cols=7, fast=False, verbose=False, **kwargs):
         else: # AI player
             utils.status(gui, f"{player_id} is thinking...")
             if not fast: time.sleep(DELAY)
-            col = players['ai'][current_player].get_computer_move(deepcopy(board), current_player)
-            if verbose: print(f'\t{player_id} selects column {col}')
-            
-            # Validate the move
-            col = col - 1 # convert to 0-indexing
-            if utils.is_valid(board, col):
-                utils.drop(gui, board, current_player, col)
-                current_player = 1 - current_player # switch turns
-            else: # the player must forfeit for illegal moves
-                utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
-                break
+            try:
+                col = players['ai'][current_player].get_computer_move(deepcopy(board), current_player)
+                if verbose: print(f'\t{player_id} selects column {col}')
+                
+                # Validate the move
+                col = col - 1 # convert to 0-indexing
+                if utils.is_valid(board, col):
+                    utils.drop(gui, board, current_player, col)
+                    current_player = 1 - current_player # switch turns
+                else: # the player must forfeit for illegal moves
+                    utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
+                    break
+            except:
+                pdb.set_trace()
+                current_player = 1 - current_player # you lost your turn!
 
         # Check if game is over yet
         gameover, winner = utils.is_gameover(board)

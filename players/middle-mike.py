@@ -29,11 +29,12 @@ def get_computer_move(board, which_player):
     cols = board.shape[1]
     if cols % 2 == 1: # odd number of columns
         ideal = cols // 2
-        choice = valid_moves[np.argmin(abs(valid_moves - ideal))]
     else: # even number of columns
         ideal = cols // 2 - 0.5
-        distance = abs(valid_moves - ideal)
-        options = [i for i, j in enumerate(distance) if j == np.min(distance)]
-        choice = random.choice(options)
+    distance = abs(valid_moves - ideal)
+    options = [valid_moves[i] for i, j in enumerate(distance) if j == np.min(distance)]
+    
+    # Choose randomly from the options that are equidistant from the middle
+    choice = random.choice(options)
 
     return choice + 1
