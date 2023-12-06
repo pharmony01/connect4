@@ -62,18 +62,33 @@ def minimax(board, player, depth, alpha, beta):
 
 
 def cost(board, player):
-    value = 0
+    row_value = 0
     for row in range(board.shape[0]):
         for col in range(board.shape[1] - 3):
-            value += evaluate_window(board[row][col : col + 4], player)
+            row_value += evaluate_window(board[row][col : col + 4], player)
+    col_value = 0
     for col in range(board.shape[1]):
         for row in range(board.shape[0] - 3):
-            value += evaluate_window(board[:, col][row : row + 4], player)
+            col_value += evaluate_window(board[:, col][row : row + 4], player)
 
-    return value
+    # Some stackoverflow witch craft comment code
+    # https://stackoverflow.com/a/6313414
+    diags = [board[::-1,:].diagonal(i) for i in range(-board.shape[0]+1,board.shape[1])]
+    diags.extend(board.diagonal(i) for i in range(board.shape[1]-1,-board.shape[0],-1))
+    diags = [n.tolist() for n in diags]
+
+    diag_value = 0
+    for val in diags:
+        if len(val) == 4:
+            diag_value += evaluate_window(val, player)
+        elif len(val) > 4:
+            for i in range(len(val)-3):
+                diag_value += evaluate_window(val[i:i+4], player)
+    return row_value + col_value + diag_value
 
 
 def evaluate_window(window, player):
+    window = np.array(window)
     opponent = 3 - player
     if np.count_nonzero(window == opponent) == 4:
         return 1e10
