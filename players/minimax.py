@@ -17,35 +17,44 @@ def get_computer_move(board: np.ndarray, which_player: int):
     choice : int
     The column (using 1-indexing!) that the player wants to drop a disc into.
     """
-    valid_moves = utils.get_valid_moves(board)
-    best_move = minimax(board, which_player + 1, depth=3, alpha=float('-inf'), beta=float('inf'))
-    return np.random.choice(valid_moves) + 1
+    best_move, _ = minimax(board, which_player + 1, depth=3, alpha=float('-inf'), beta=float('inf'))
+    print(best_move)
+    return best_move + 1
 
 def minimax(board, player, depth, alpha, beta):
-    if depth == 0 or utils.is_gameover(board):
-        return cost(board, player)
+    # If the depth is 0 or the game is over, return
+    if depth == 0 or utils.is_gameover(board)[0]:
+        return None, cost(board, player)
 
+    # Find the possible valid moves
     valid_moves = utils.get_valid_moves(board)
+
     if player == 1:  # Maximizing player (should be the AI)
         max_eval = float('-inf')
+        best_move = None
         for move in valid_moves:
             new_board = simulate_move(board, move, player)
-            eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
-            max_eval = max(max_eval, eval)
+            _, eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
+            if eval > max_eval:
+                max_eval = eval
+                best_move = move
             alpha = max(alpha, eval)
             if beta <= alpha:
                 break
-        return max_eval
+        return best_move, max_eval
     else:  # Minimizing player (should be the opponent)
         min_eval = float('inf')
+        best_move = None
         for move in valid_moves:
             new_board = simulate_move(board, move, player)
-            eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
-            min_eval = min(min_eval, eval)
+            _, eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
+            if eval < min_eval:
+                min_eval = eval
+                best_move = move
             beta = min(beta, eval)
             if beta <= alpha:
                 break
-        return min_eval
+        return best_move, min_eval
 
 
 def cost(board, player):
@@ -72,13 +81,8 @@ def cost(board, player):
 
     return value
 
-
-
 # Works as intended
 def simulate_move(board, move, player):
     new_board = board.copy()
     new_board[np.argmin(board[:, move])][move] = player
     return new_board
-
-
-    
