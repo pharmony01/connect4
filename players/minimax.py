@@ -3,6 +3,7 @@ import pdb
 import utils
 import random
 
+
 def get_computer_move(board: np.ndarray, which_player: int):
     """Search for the best move based on the current game state.
     Parameters
@@ -17,9 +18,12 @@ def get_computer_move(board: np.ndarray, which_player: int):
     choice : int
     The column (using 1-indexing!) that the player wants to drop a disc into.
     """
-    best_move, _ = minimax(board, which_player + 1, depth=3, alpha=float('-inf'), beta=float('inf'))
-    print(best_move)
+    best_move, _ = minimax(
+        board, which_player + 1, depth=3, alpha=float("-inf"), beta=float("inf")
+    )
+    print(f"Chosen move: {_}")
     return best_move + 1
+
 
 def minimax(board, player, depth, alpha, beta):
     # If the depth is 0 or the game is over, return
@@ -29,57 +33,61 @@ def minimax(board, player, depth, alpha, beta):
     # Find the possible valid moves
     valid_moves = utils.get_valid_moves(board)
 
-    if player == 1:  # Maximizing player (should be the AI)
-        max_eval = float('-inf')
+    if player == 1:
+        value = float("-inf")
         best_move = None
         for move in valid_moves:
             new_board = simulate_move(board, move, player)
             _, eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
-            if eval > max_eval:
-                max_eval = eval
+            if eval > value:
+                value = eval
                 best_move = move
-            alpha = max(alpha, eval)
-            if beta <= alpha:
+            if value > beta:
                 break
-        return best_move, max_eval
-    else:  # Minimizing player (should be the opponent)
-        min_eval = float('inf')
+            alpha = max(alpha, value)
+        return best_move, value
+    else:
+        value = float("inf")
         best_move = None
         for move in valid_moves:
             new_board = simulate_move(board, move, player)
             _, eval = minimax(new_board, 3 - player, depth - 1, alpha, beta)
-            if eval < min_eval:
-                min_eval = eval
+            if eval < value:
+                value = eval
                 best_move = move
-            beta = min(beta, eval)
-            if beta <= alpha:
+            if value < alpha:
                 break
-        return best_move, min_eval
+            beta = min(beta, value)
+        return best_move, value
 
 
 def cost(board, player):
-    opponent = 3 - player
-
-    if utils.is_winner(board, player):
-        return 1e10  # AI wins
-    elif utils.is_winner(board, opponent):
-        return -1e10  # Opponent wins
-
     value = 0
-
-    # Check for proximity to AI player's pieces
-    for i in range(board.shape[0]):
-        for j in range(board.shape[1]):
-            if board[i, j] == player:
-                # Add value for each neighboring position
-                for x in range(i - 1, i + 2):
-                    for y in range(j - 1, j + 2):
-                        # Sorry about this line
-                        if 0 <= x < board.shape[0] and 0 <= y < board.shape[1] and (x != i or y != j):
-                            if board[x, y] == player:
-                                value += 1
+    for row in range(board.shape[0]):
+        for col in range(board.shape[1] - 3):
+            value += evaluate_window(board[row][col : col + 4], player)
+    for col in range(board.shape[1]):
+        for row in range(board.shape[0] - 3):
+            value += evaluate_window(board[:, col][row : row + 4], player)
 
     return value
+
+
+def evaluate_window(window, player):
+    opponent = 3 - player
+    if np.count_nonzero(window == opponent) == 4:
+        return 1e10
+    if np.count_nonzero(window == opponent) == 3:
+        return 10
+    if np.count_nonzero(window == opponent) == 2:
+        return 5
+    if np.count_nonzero(window == player) == 4:
+        return -1e10
+    if np.count_nonzero(window == player) == 3:
+        return -15
+    else:
+        return 0
+
 
 # Works as intended
 def simulate_move(board, move, player):
