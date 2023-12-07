@@ -121,8 +121,9 @@ def play(players, rows=6, cols=7, board=None, fast=False, verbose=False, **kwarg
                     utils.drop(gui, board, current_player, col)
                     current_player = 1 - current_player # switch turns
                 else: # the player must forfeit for illegal moves
-                    utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
-                    break
+                    pass # currently allows human to make illegal moves
+                    # utils.status(gui, f"{player_id} made an illegal move. You forfeit!")
+                    # break
         else: # AI player
             utils.status(gui, f"{player_id} is thinking...")
             if not fast: time.sleep(DELAY)
