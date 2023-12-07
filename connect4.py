@@ -107,6 +107,13 @@ def play(players, rows=6, cols=7, board=None, fast=False, verbose=False, **kwarg
                 break
             elif key == 'd': # debug
                 pdb.set_trace()
+            elif key == 'b': # show board state
+                temp = np.flipud(board)
+                for row in temp:
+                    for element in row:
+                        print(element, end="")
+                    print()
+                print()
             elif key == "Ctrl+n": # start new game
                 utils.reset(gui)
                 board = np.zeros((rows, cols))
