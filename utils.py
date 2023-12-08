@@ -274,15 +274,13 @@ def reset(gui, delay=1.0):
     time.sleep(delay)
     status(gui, "")
 
-def setup(rows=6, cols=7):
+def setup(board):
     """Create the graphical user interface for the game.
     
     Parameters
     ----------
-    rows : int
-        Number of rows on the board.
-    cols : int
-        Number of columns on the board.
+    board : np.array of ints
+        The initial board state, which may (optionally) be non-empty.
 
     Returns
     -------
@@ -290,6 +288,7 @@ def setup(rows=6, cols=7):
         The graphics object containing all of the necessary UI elements.
     """
     # Input checking
+    rows, cols = board.shape
     if rows < 4:
         raise Exception(f'ERROR: The number of rows ({rows}) must be at least 4. Check inputs.')
     if cols < 4:
@@ -302,19 +301,30 @@ def setup(rows=6, cols=7):
     gui.setCoords(0, 0, wid, hei) # put origin in bottom-left corner
 
     # Add board
-    board = Rectangle(Point(MARGIN, MARGIN), Point(wid - MARGIN, hei - MARGIN - HEADER))
-    board.setFill(COLORS['board'])
-    board.setOutline(COLORS['outline'])
-    board.setWidth(4)
-    board.draw(gui)
+    rect = Rectangle(Point(MARGIN, MARGIN), Point(wid - MARGIN, hei - MARGIN - HEADER))
+    rect.setFill(COLORS['board'])
+    rect.setOutline(COLORS['outline'])
+    rect.setWidth(4)
+    rect.draw(gui)
 
-    # Add holes
+    # Add holes (with optional starting discs if provided)
     for row in range(rows):
         for col in range(cols):
+            # Get position (in pixels)
             x = MARGIN + 1.25 * DISC * (2 * col + 1)
             y = MARGIN + 1.25 * DISC * (2 * row + 1)
+            
+            # Get color
+            if board[row, col] == 1:
+                clr = COLORS['player1']
+            elif board[row, col] == 2:
+                clr = COLORS['player2']
+            else:
+                clr = COLORS['background']
+            
+            # Make object
             hole = Circle(Point(x, y), DISC)
-            hole.setFill(COLORS['background'])
+            hole.setFill(clr)
             hole.setOutline(COLORS['outline'])
             hole.setWidth(4)
             hole.draw(gui)
